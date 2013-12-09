@@ -6,6 +6,8 @@ import akka.actor.Props;
 import akka.actor.UntypedActor;
 import akka.remote.message.Message;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Output;
 import com.typesafe.config.ConfigFactory;
 
 public class AkkaRemoteClient {
@@ -56,6 +58,9 @@ public class AkkaRemoteClient {
 		@SuppressWarnings("deprecation")
 		ActorRef LocalActor = _system.actorOf(new Props(LocalActor.class));
 //		ArrayList<String> msgList = new ArrayList<String>();
+		
+		
+		
 		for(int i =0;i<1000;i++) {
 //			msgList.add("this is message no " + i);
 //			if(i%10!=0 || i==0)
