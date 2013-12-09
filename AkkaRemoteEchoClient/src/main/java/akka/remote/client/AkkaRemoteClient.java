@@ -1,12 +1,12 @@
 package akka.remote.client;
 
-import com.typesafe.config.ConfigFactory;
-
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 import akka.remote.message.Message;
+
+import com.typesafe.config.ConfigFactory;
 
 public class AkkaRemoteClient {
 	
@@ -38,8 +38,7 @@ public class AkkaRemoteClient {
 			
 			if(message instanceof Message) {
 				Message msg = (Message) message;
-				if(msg.getMessageSender() == null) {
-					msg.setMessageSender(getSelf());
+				if(msg.getType() == 0) {					
 					remoteActor.tell(msg, getSelf());
 				}else {
 					System.out.println(msg.getMessageContents());
@@ -54,20 +53,20 @@ public class AkkaRemoteClient {
     public static void main( String[] args ) throws InterruptedException {
     	
     	ActorSystem _system = ActorSystem.create("LocalNodeApp",ConfigFactory.load().getConfig("LocalSys"));
+		@SuppressWarnings("deprecation")
 		ActorRef LocalActor = _system.actorOf(new Props(LocalActor.class));
-		
-		for(int i =0;i<1000;i++) {	
+//		ArrayList<String> msgList = new ArrayList<String>();
+		for(int i =0;i<1000;i++) {
+//			msgList.add("this is message no " + i);
+//			if(i%10!=0 || i==0)
+//				continue;
+			LocalActor.tell(new Message("this is message no. " + i,0),ActorRef.noSender());
 			Thread.sleep(2000);
-			LocalActor.tell(new Message("this is message no " + i,null),ActorRef.noSender());
 		}
 		_system.shutdown();
-    	
-    	
     	/*
-    	
     	Scanner input = new Scanner(System.in);
     	ActorSystem _system = ActorSystem.create("LocalNodeApp", ConfigFactory.load().getConfig("LocalSys"));
-    	
 		ActorRef LocalActor = _system.actorOf(new Props(LocalActor.class));
 		boolean stop = false;
 		String message = null;
@@ -78,8 +77,6 @@ public class AkkaRemoteClient {
 				stop = true;
 			LocalActor.tell(new Message(message,ActorRef.noSender()), ActorRef.noSender());
 		}
-		
 		*/
     }
-
 }

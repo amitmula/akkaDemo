@@ -1,12 +1,14 @@
 package akka.remote.server;
 
 
-import akka.remote.message.Message;
+import java.util.ArrayList;
+
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 import akka.kernel.Bootable;
+import akka.remote.message.Message;
 
 import com.typesafe.config.ConfigFactory;
 
@@ -25,8 +27,9 @@ public class RemoteEchoServer implements Bootable {
 				System.out.println("Alien message");*/
 			if(obj instanceof Message) {
 				Message msg = (Message) obj;
-				System.out.println("Message received from Client : " + msg.getMessageContents());
-				msg.setMessageContents("Server echo - " + msg.getMessageContents());
+				System.out.println("Messages received from Client : " + msg.getMessageContents());
+				msg.setMessageContents("Server Echo - " + msg.getMessageContents());
+				msg.setType(1);
 				getSender().tell(msg, getSelf());
 			}
 		}
