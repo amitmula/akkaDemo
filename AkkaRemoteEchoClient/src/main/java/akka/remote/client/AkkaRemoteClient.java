@@ -1,13 +1,14 @@
 package akka.remote.client;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 import akka.remote.message.Message;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.Output;
 import com.typesafe.config.ConfigFactory;
 
 public class AkkaRemoteClient {
@@ -44,6 +45,12 @@ public class AkkaRemoteClient {
 					remoteActor.tell(msg, getSelf());
 				}else {
 					System.out.println(msg.getMessageContents());
+					System.out.println("ArrayList conntents : ");
+					ArrayList<String> messages = msg.getMessages();
+					Iterator<String> itr = messages.iterator();
+					while(itr.hasNext()) {
+						System.out.println(itr.next());
+					}
 				}
 				/*Future<Object> future = Patterns.ask(remoteActor, message.toString(),timeout);
 				String result = (String) Await.result(future, timeout.duration());

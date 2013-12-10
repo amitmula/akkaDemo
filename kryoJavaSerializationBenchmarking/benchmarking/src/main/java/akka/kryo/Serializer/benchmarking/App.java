@@ -26,10 +26,10 @@ public class App {
 	
 	public App() {
 		kryo = new Kryo();
-		kryo.register(KMessage.class);
+		//kryo.register(KMessage.class);
 	}
 	
-	static final int loopCount = 100;	
+	static final int loopCount = 100000;
 
 	long measureTimeKryo(Kryo kryo, Object obj) {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
