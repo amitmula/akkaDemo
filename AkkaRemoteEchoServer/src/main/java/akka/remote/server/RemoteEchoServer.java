@@ -29,6 +29,9 @@ public class RemoteEchoServer implements Bootable {
 				Message msg = (Message) obj;
 				System.out.println("Messages received from Client : " + msg.getMessageContents());
 				msg.setMessageContents("Server Echo - " + msg.getMessageContents());
+				ArrayList<String> messages = msg.getMessages();
+				messages.add(0, "server echo added");
+				msg.setMessages(messages);
 				msg.setType(1);
 				getSender().tell(msg, getSelf());
 			}
