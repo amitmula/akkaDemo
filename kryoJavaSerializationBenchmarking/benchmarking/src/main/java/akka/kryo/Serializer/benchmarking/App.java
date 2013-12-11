@@ -5,9 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.HashMap;
 
 import akka.remote.message.JMessage;
 import akka.remote.message.KMessage;
@@ -29,7 +27,7 @@ public class App {
 		//kryo.register(KMessage.class);
 	}
 	
-	static final int loopCount = 100000;
+	static final int loopCount = 10000;
 
 	long measureTimeKryo(Kryo kryo, Object obj) {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -38,7 +36,7 @@ public class App {
         kryo.writeObject(output, obj);
         output.close(); // Also calls output.flush()
         byte[] buffer = stream.toByteArray(); // Serialization done, get bytes
-        KMessage deSerlialisedMessage = kryo.readObject(new Input(new ByteArrayInputStream(buffer)), KMessage.class);
+        KMessage deSerlialisedMessage = kryo.readObject(new Input(new ByteArrayInputStream(buffer)), KMessage.class);        
         long stop = System.currentTimeMillis();
         long elapsed = stop -start;
         return elapsed;
@@ -68,28 +66,39 @@ public class App {
     	
     	App benchMarkingApp = new App();
     	
-        List<Integer> kryoTimes = new ArrayList<Integer>();
-        List<Integer> javaTimes = new ArrayList<Integer>();
+    	HashMap<Integer, Integer> kryoTimes = new HashMap<Integer, Integer>();
+    	HashMap<Integer, Integer> javaTimes = new HashMap<Integer, Integer>();
         
         for(int i =0; i<loopCount; i++) {
-        	kryoTimes.add((int) benchMarkingApp.measureTimeKryo(kryo, new KMessage("new message for kryo", 0)));
+        	kryoTimes.put(i, (int) benchMarkingApp.measureTimeKryo(kryo, new KMessage(i)));
         }
         
         for(int i =0; i<loopCount; i++) {
-        	javaTimes.add((int) benchMarkingApp.measureTimeJava(new JMessage("new message for java", 0)));
+        	javaTimes.put(i, (int) benchMarkingApp.measureTimeJava(new KMessage(i)));
         }
         
         long jSum = 0,kSum = 0;
-        Iterator<Integer> itr;
+        int interval = 0;
+//        Iterator<Integer> itr;
         
-        itr = javaTimes.iterator();
-        while(itr.hasNext())
-        	jSum += (int)itr.next();
-        System.out.println("Java serilizing average time : " + (float)jSum/(float)loopCount);
+//        itr = javaTimes.iterator();
+        System.out.println("Benchmarking results<kryo ms,java ms>\nElements of the object are of type java.lang.String");
+//        while(itr.hasNext())
+//        	jSum += (int)itr.next();
+//        System.out.println("Java serilizing average time : " + (float)jSum/(float)loopCount);
         
-        itr = kryoTimes.iterator();
-        while(itr.hasNext())
-        	kSum += (int)itr.next();
-        System.out.println("Kryo serilizing average time : " + (float)kSum/(float)loopCount);
+        for(int i=0; i < loopCount; i++) {
+        	jSum += javaTimes.get(i);
+        	kSum += kryoTimes.get(i);
+        	if(i%100 == 0 && i!=0) {
+        		System.out.println("Avg. serialization time for " + interval + " to " + i + " elements : <" + (float)jSum/(float)100 + "," + (float)kSum/(float)100 + ">");
+        		jSum=0;kSum=0;interval = i;
+        	}
+    	}
+        
+//        itr = kryoTimes.iterator();
+//        while(itr.hasNext())
+//        	kSum += (int)itr.next();
+//        System.out.println("Kryo serilizing average time : " + (float)kSum/(float)loopCount);
     }
 } 
