@@ -4,21 +4,31 @@ import java.util.ArrayList;
 
 public class Message{
 	int type;
-	String message;
+	int count;
 	ArrayList<String> messages;
 	
+	public Message(int count, int type) {
+		this.type = type;
+		this.count = count;
+		this.messages = new ArrayList<String>();
+		for(int i=0; i<count; i++) {
+			this.messages.add("printing message " + this.count + " times.");
+		}
+	}
+	
+	public int getCount() {
+		return count;
+	}
+	
+	public void setCount(int count) {
+		this.count = count;
+	}
+
 	public ArrayList<String> getMessages() {
 		return messages;
 	}
 	public void setMessages(ArrayList<String> messages) {
 		this.messages = messages;
-	}
-	
-	public Message(String message, int type) {
-		this.type = type;
-		this.message = message;
-		this.messages = new ArrayList<String>();
-		this.messages.add("new message in messasges arraylist");
 	}
 	
 	public int getType() {
@@ -27,13 +37,5 @@ public class Message{
 	
 	public void setType(int type) {
 		this.type = type;
-	}
-	
-	public String getMessageContents() {
-		return message;
-	}
-	
-	public void setMessageContents(String messageContents) {
-		this.message = messageContents;
 	}
 }

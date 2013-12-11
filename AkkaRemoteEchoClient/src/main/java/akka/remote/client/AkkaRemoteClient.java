@@ -44,8 +44,6 @@ public class AkkaRemoteClient {
 				if(msg.getType() == 0) {					
 					remoteActor.tell(msg, getSelf());
 				}else {
-					System.out.println(msg.getMessageContents());
-					System.out.println("ArrayList conntents : ");
 					ArrayList<String> messages = msg.getMessages();
 					Iterator<String> itr = messages.iterator();
 					while(itr.hasNext()) {
@@ -72,7 +70,7 @@ public class AkkaRemoteClient {
 //			msgList.add("this is message no " + i);
 //			if(i%10!=0 || i==0)
 //				continue;
-			LocalActor.tell(new Message("this is message no. " + i,0),ActorRef.noSender());
+			LocalActor.tell(new Message(i,0),ActorRef.noSender());
 			Thread.sleep(2000);
 		}
 		_system.shutdown();
