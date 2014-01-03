@@ -1,4 +1,4 @@
-package akka.multiSystem.WorkProtocol;
+package akka.multiSystem.workProtocol;
 
 public class WorkRequest {
 

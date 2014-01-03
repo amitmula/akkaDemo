@@ -2,13 +2,17 @@ package akka.multiSystem;
 
 import java.util.Random;
 
-import com.typesafe.config.ConfigFactory;
-
 import akka.actor.ActorRef;
+import akka.actor.ActorSelection;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
-import akka.multiSystem.WorkProtocol.*;
+import akka.japi.Creator;
+import akka.multiSystem.workProtocol.Work;
+import akka.multiSystem.workProtocol.WorkRequest;
+import akka.multiSystem.workProtocol.WorkResult;
+
+import com.typesafe.config.ConfigFactory;
 
 public class MultiSystem {
 
@@ -53,7 +57,7 @@ public class MultiSystem {
 		}
 	}*/
 	
-	public static class Worker extends UntypedActor {
+	public static class Worker extends UntypedActor{
 
 		ActorRef remoteActor;
 		Random randomGenerator = new Random();
@@ -67,7 +71,6 @@ public class MultiSystem {
 		
 		@Override
 		public void onReceive(Object msg) throws Exception {
-			
 			if (msg instanceof WorkRequest) {
 				remoteActor.tell(new Work(randomGenerator.nextInt(100)), getSelf());
 			}else if(msg instanceof Work) {
@@ -81,6 +84,7 @@ public class MultiSystem {
 		}
 	}
 	
+	
 	public static void main(String[] args) throws InterruptedException {
 		
 		ActorSystem producer_system = ActorSystem.create("producer", ConfigFactory.load().getConfig("producer"));
@@ -89,8 +93,8 @@ public class MultiSystem {
 		consumer_system.actorOf(Props.create(Worker.class), "consumerActor");
 //		ActorRef consumerActorLocal = producer_system.actorOf(Props.create(Worker.class));
 		Thread.sleep(3000);
-		ActorRef producerActor = producer_system.actorOf(Props.create(Worker.class));
-		
+		producer_system.actorOf(Props.create(Worker.class),"Worker");
+		ActorSelection producerActor =  producer_system.actorSelection("akka://producer/user/Worker");
 		for(int i=0; i<10; i++) {
 			producerActor.tell(new WorkRequest(), ActorRef.noSender());
 //			producerActor.tell(new WorkRequest(), consumerActorLocal);
