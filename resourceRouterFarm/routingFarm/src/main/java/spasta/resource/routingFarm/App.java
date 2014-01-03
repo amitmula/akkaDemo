@@ -44,10 +44,10 @@ public class App
         
         SecureRandom random = new SecureRandom();
         String type = "";
-    	for(int i=0; i<10; i++) {
+    	for(int i=0; i<10000; i++) {
     		type = type.startsWith("balance")?"account " + i:"balance " + i;
     		endPointActor.tell(type + "  " + new BigInteger(130, random).toString(32), ActorRef.noSender());
-    		Thread.sleep(1000);
+    		Thread.sleep(10);
     	}
     	farmSystem.shutdown();
     	endPointActorSystem.shutdown();
